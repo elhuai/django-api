@@ -99,6 +99,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# 客制化 -> 剛建置專案時就要做，因為
+AUTH_USER_MODEL = "management.User" #在 app的名字,model的名稱
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/

@@ -6,6 +6,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
+    # 設定檔案要去 server.settings 取用
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'server.settings')
     try:
         from django.core.management import execute_from_command_line
