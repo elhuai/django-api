@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework",
     # local APPS
     "server.apps.management",  # 新增這app放在這路徑
+    "server.apps.playground",  # 新增這app放在這路徑
 ]
 
 MIDDLEWARE = [
