@@ -16,15 +16,13 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 
-from server.apps.management.views import HiView, hello
 
 urlpatterns = [
     # 指定使用者呼叫的位置： path("path",view位置)
     path("admin/", admin.site.urls),
-    path("api/v1/practice/hello", hello),
     path(
-        "api/v1/practice/hi", HiView.as_view()
-    ),  # 預設承接的是一個方法，所以如果是class型態的就要用as_view()轉為方法
+        "api/v1/playground/", include("server.apps.playground.urls")
+    ),  # 前綴方式可以連接到各種不同的apps 讓apps個字的功能就可以連動到各自的urls
 ]
