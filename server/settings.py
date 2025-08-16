@@ -31,12 +31,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Django setting
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # third part setting
+    "rest_framework",
+    # local APPS
     "server.apps.management",  # 新增這app放在這路徑
 ]
 
@@ -100,7 +104,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # 客制化 -> 剛建置專案時就要做，因為
-AUTH_USER_MODEL = "management.User" #在 app的名字,model的名稱
+AUTH_USER_MODEL = "management.User"  # 在 app的名字,model的名稱
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
