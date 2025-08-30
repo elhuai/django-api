@@ -1,0 +1,27 @@
+meta {
+  name: items-create
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://127.0.0.1:8000/api/v1/playground/items
+  body: json
+  auth: inherit
+}
+
+params:query {
+  : 
+}
+
+body:json {
+   {
+      "name": "qwert",
+      "description": "tyui123",
+      "is_active": false,
+    }
+}
+
+settings {
+  encodeUrl: true
+}

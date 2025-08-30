@@ -1,0 +1,15 @@
+meta {
+  name: items-delete
+  type: http
+  seq: 6
+}
+
+delete {
+  url: http://127.0.0.1:8000/api/v1/playground/items/1
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
