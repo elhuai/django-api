@@ -13,5 +13,6 @@ urlpatterns = [
     ), 
     path(
         "items/<int:item_id>", ItemDetailView.as_view()
-    ),  #primerKey 通常會叫pk 也可以叫item_id 但切記不可以是id 因為python裡面有專屬id 如果用id 會導致python 的id 找不到
+    ),  #primerKey 通常會叫pk 也可以叫item_id 但切記不可以是id 
+        #因為python裡面有專屬id 如果用id 會導致python 的id 找不到
 ]
