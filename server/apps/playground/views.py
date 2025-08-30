@@ -42,11 +42,19 @@ class ItemListView(APIView):
     # 新增資料 要經過序列化清洗，把多的欄位移除，以確保拿到的資料是正確的
     def post(self, request):
         serializer = ItemSerializer(data=request.data)
-        # ItemSerializer 序列化清洗 去驗證 request.data 是否合法可以被使用
-        if not serializer.is_valid():  # 沒有通過認證的話400 (使用者傳進資料有錯)
-            return Response(serializer.errors, status=400)
-        # **語法糖將資料解成變數型態
-        Item.objects.create(**serializer.validated_data)
+
+        # 方法一：用ＯＲＭ去做
+        # # ItemSerializer 序列化清洗 去驗證 request.data 是否合法可以被使用
+        # if not serializer.is_valid():  # 沒有通過認證的話400 (使用者傳進資料有錯)
+        #     return Response(serializer.errors, status=400)
+        # # **語法糖將資料解成變數型態
+        # Item.objects.create(**serializer.validated_data)
+
+        # 方法二：用框架裡面的預設做（推薦）
+        # 利用 is_valid() 自動驗證資料，遇到錯誤就直接丟出例外並回應錯誤訊息
+        serializer.is_valid(raise_exception=True)
+        serializer.save()  # 完成新增
+
         return Response({"status": "OK"}, status=201)
 
 
@@ -60,3 +68,12 @@ class ItemDetailView(APIView):
 
         serializer = ItemSerializer(item)  # 將資料轉序列化
         return Response(serializer.data)
+
+    def delete(self, reqiuest, item_id):  # 動態路徑所以要多收一個參數
+        try:
+            item = Item.objects.get(id=item_id)
+        except Item.DoesNotExist:
+            raise Http404
+
+        item.delete()
+        return Response({"massage": "Finish Delete"}, status=204)
