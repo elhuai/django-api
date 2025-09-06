@@ -2,8 +2,13 @@ from rest_framework.decorators import api_view
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from server.apps.playground.models import Item
-from server.apps.playground.serializers import ItemSerializer
+from server.apps.playground.models import Item, ItemComment
+from server.apps.playground.serializers import (
+    ItemSerializer,
+    ItemCommentSerializer,
+    ItemWithCommentsSerializer,
+)
+from rest_framework.generics import ListCreateAPIView
 
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -45,9 +50,9 @@ class HiView(APIView):
 
 # GET /xxxxxx/items => 得到資料庫中所有的 Items
 # 第一寫法：使用框架 (把取資料方式改為通用方式，不要很多地方都用相同的語法)
-# class ItemListView(ListCreateAPIView):
-#     serializer_class = ItemSerializer
-#     queryset = Item.objects.all()
+class ItemListView(ListCreateAPIView):
+    serializer_class = ItemSerializer
+    queryset = Item.objects.all()
 
 
 # 第二種寫法：()
@@ -161,9 +166,10 @@ class ItemDetailView(RetrieveUpdateDestroyAPIView):
 # 使用 ViewSet 就可以不用寫很多view(listView->做list DeatailView->做增刪檢查)
 class ItemViewSet(ModelViewSet):
     # ModelViewSet 其實是ItemListView＋ItemDetailView這裡面的所有功能
-    serializer_class = ItemSerializer
-    queryset = Item.objects.all()  # queryset 變數名稱不可以改 靠這個名稱去偵測的
-
+    # serializer_class = ItemSerializer
+    serializer_class = ItemWithCommentsSerializer
+    # queryset = Item.objects.all()  # queryset 變數名稱不可以改 靠這個名稱去偵測的 # 這樣去抓資料含comment會一筆一筆抓 效能不好(query n+1) 所以改為
+    queryset = Item.objects.prefetch_related("comments")
     # queryset = Item.objects.order_by("id")  # 請依照 id 去排序 ordering_field 有啟用的時候可以不用寫這行
     # pagination_class = PageNumberPagination  # 設定指定的api才有分頁
     pagination_class = PageNumberWithSizePagination  # 設定指定的api才有分頁
@@ -177,4 +183,23 @@ class ItemViewSet(ModelViewSet):
     ordering_fields = ["name", "id"]  # 排序行的filter 允許使用者指定的欄位有哪些
     ordering = ["id"]  # 如果使用者沒有指定排序，就會自動以id排序
     search_fields = ["description"]  # 關鍵字要在哪些欄位被搜尋
-    filterset_fields = ["is_active", "name"]  # 需要完全符合 不模糊搜尋
+    # filterset_fields = ["is_active", "name"]  # 需要完全符合 不模糊搜尋
+    filterset_fields = {
+        "is_active": ["exact"],
+        "name": ["exact", "contains"],
+        "id": [
+            "gt",  # >
+            "gte",  # >=
+            "lt",  # <
+            "lte",  # <=
+        ],
+    }
+    # def get_serializer_class(self):
+    #     if self.action == "retrieve":
+    #         return ItemWithCommentsSerializer
+    #     return super().get_serializer_class()
+
+
+class ItemCommentViewSet(ModelViewSet):
+    queryset = ItemComment.objects.all()
+    serializer_class = ItemCommentSerializer
