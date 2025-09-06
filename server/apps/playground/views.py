@@ -1,12 +1,15 @@
 from rest_framework.decorators import api_view
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from server.apps.playground.models import Item
 from server.apps.playground.serializers import ItemSerializer
 
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.filters import OrderingFilter, SearchFilter
+# from rest_framework.pagination import PageNumberPagination
 
+from server.utils.pagination import PageNumberWithSizePagination
 # from rest_framework.mixins import (
 #     CreateModelMixin,  # 負責處理建立 (POST)
 #     DestroyModelMixin,  # 負責處理刪除 (DELETE)
@@ -159,5 +162,19 @@ class ItemDetailView(RetrieveUpdateDestroyAPIView):
 class ItemViewSet(ModelViewSet):
     # ModelViewSet 其實是ItemListView＋ItemDetailView這裡面的所有功能
     serializer_class = ItemSerializer
-    queryset = Item.objects.all()
-    pagination_class = PageNumberPagination  # 設定指定的api才有分頁
+    queryset = Item.objects.all()  # queryset 變數名稱不可以改 靠這個名稱去偵測的
+
+    # queryset = Item.objects.order_by("id")  # 請依照 id 去排序 ordering_field 有啟用的時候可以不用寫這行
+    # pagination_class = PageNumberPagination  # 設定指定的api才有分頁
+    pagination_class = PageNumberWithSizePagination  # 設定指定的api才有分頁
+    page_size = 10
+    # 新增 讓使用者自訂 filter
+    filter_backends = [  # filter_backends許允被使用的filter種類
+        OrderingFilter,  # OrderingFilter排序行的filter
+        SearchFilter,  # SearchFilter api 的search可以搜尋哪一個欄位
+        DjangoFilterBackend,  # 特定欄位的filter 需載 dajango-filter
+    ]
+    ordering_fields = ["name", "id"]  # 排序行的filter 允許使用者指定的欄位有哪些
+    ordering = ["id"]  # 如果使用者沒有指定排序，就會自動以id排序
+    search_fields = ["description"]  # 關鍵字要在哪些欄位被搜尋
+    filterset_fields = ["is_active", "name"]  # 需要完全符合 不模糊搜尋
