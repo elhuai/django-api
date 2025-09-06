@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # third part setting
     "rest_framework",
+    "django_extensions",
     # local APPS
     "server.apps.management",  # 新增這app放在這路徑
     "server.apps.playground",  # 新增這app放在這路徑
@@ -128,3 +129,8 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# 設定每個分頁的資料數量
+REST_FRAMEWORK = {
+    "PAGE_SIZE": 2,
+}

@@ -1,0 +1,19 @@
+meta {
+  name: item-v2-list
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://127.0.0.1:8000/api/v1/playground/viewset/items-v2?page=13
+  body: none
+  auth: inherit
+}
+
+params:query {
+  page: 13
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,13 +1,19 @@
 meta {
-  name: items-delete
+  name: items-partial-patch
   type: http
-  seq: 6
+  seq: 8
 }
 
-delete {
+patch {
   url: http://127.0.0.1:8000/api/v1/playground/items/9
-  body: none
+  body: json
   auth: inherit
+}
+
+body:json {
+  {
+     "name": "Hi123"
+  }
 }
 
 settings {

@@ -1,0 +1,23 @@
+meta {
+  name: item-v2-update
+  type: http
+  seq: 1
+}
+
+put {
+  url: http://127.0.0.1:8000/api/v1/playground/viewset/items-v2/8
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "name": "Hi888",
+      "description": "hello World888",
+      "is_active": true
+  }
+}
+
+settings {
+  encodeUrl: true
+}
