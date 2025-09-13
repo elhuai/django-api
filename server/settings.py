@@ -40,8 +40,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # third part setting
     "rest_framework",
+    "rest_framework.authtoken",
     "django_extensions",
     "django_filters",
+    "drf_spectacular",
     # local APPS
     "server.apps.management",  # 新增這app放在這路徑
     "server.apps.playground",  # 新增這app放在這路徑
@@ -135,4 +137,24 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
     "PAGE_SIZE": 2,
+    "DEFAULT_PAGINATION_CLASS": "server.utils.pagination.PageNumberWithSizePagination",
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.OrderingFilter",
+        "rest_framework.filters.SearchFilter",
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",  # 建立API文件資料
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Django API",
+    "DESCRIPTION": "My Django API",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,  # 文件是否顯示 Schema
 }

@@ -1,4 +1,5 @@
-from django.urls import path, include
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 
 from server.apps.playground.views import (
     HiView,
@@ -7,7 +8,6 @@ from server.apps.playground.views import (
     ItemViewSet,
     hello,
 )
-from rest_framework.routers import DefaultRouter
 
 # ViewSet的話請要用router註冊
 router = DefaultRouter(trailing_slash=False)  # 產生的 router 不要有結尾的"/"

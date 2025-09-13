@@ -1,15 +1,20 @@
-from rest_framework.decorators import api_view
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import api_view
+from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from server.apps.playground.models import Item
-from server.apps.playground.serializers import ItemSerializer
-
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.filters import OrderingFilter, SearchFilter
-# from rest_framework.pagination import PageNumberPagination
 
+from server.apps.playground.models import Item, ItemComment
+from server.apps.playground.serializers import (
+    ItemCommentSerializer,
+    ItemSerializer,
+)
+
+# from rest_framework.pagination import PageNumberPagination
 from server.utils.pagination import PageNumberWithSizePagination
+
 # from rest_framework.mixins import (
 #     CreateModelMixin,  # 負責處理建立 (POST)
 #     DestroyModelMixin,  # 負責處理刪除 (DELETE)
@@ -176,5 +181,34 @@ class ItemViewSet(ModelViewSet):
     ]
     ordering_fields = ["name", "id"]  # 排序行的filter 允許使用者指定的欄位有哪些
     ordering = ["id"]  # 如果使用者沒有指定排序，就會自動以id排序
-    search_fields = ["description"]  # 關鍵字要在哪些欄位被搜尋
-    filterset_fields = ["is_active", "name"]  # 需要完全符合 不模糊搜尋
+    search_fields = ["name", "description"]  # 關鍵字要在哪些欄位中被搜尋
+    # filterset_fields = ["is_active", "name"]  # 需要完全符合 不模糊搜尋
+    filterset_fields = {
+        "is_active": ["exact"],
+        "name": ["exact", "contains"],
+        "id": [
+            "gt",  # >
+            "gte",  # >=
+            "lt",  # <
+            "lte",  # <=
+        ],
+    }
+
+
+class ItemCommentViewSet(ModelViewSet):
+    queryset = ItemComment.objects.select_related("item")
+    serializer_class = ItemCommentSerializer
+
+    ordering_fields = ["id", "created_at", "updated_at"]
+    ordering = ["-created_at"]
+
+    search_fields = ["content", "item__name"]
+
+    filterset_fields = {
+        "id": ["gt", "gte", "lt", "lte"],
+        "created_at": ["gt", "gte", "lt", "lte"],
+        "updated_at": ["gt", "gte", "lt", "lte"],
+        "item__is_active": ["exact"],
+        "item__name": ["exact", "contains"],
+    }
+    permission_classes = [IsAuthenticatedOrReadOnly]

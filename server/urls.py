@@ -17,7 +17,11 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
-
+from drf_spectacular.views import (
+    SpectacularJSONAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 
 urlpatterns = [
     # 指定使用者呼叫的位置： path("path",view位置)
@@ -25,4 +29,17 @@ urlpatterns = [
     path(
         "api/v1/playground/", include("server.apps.playground.urls")
     ),  # 前綴方式可以連接到各種不同的apps 讓apps個字的功能就可以連動到各自的urls
+    path(
+        "api/docs/schema.json", SpectacularJSONAPIView.as_view(), name="schema"
+    ),  # 生成json檔案
+    path(
+        "api/docs/swagger/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger",
+    ),  # 生成可以測試的api文件
+    path(
+        "api/docs/redoc/",
+        SpectacularRedocView.as_view(url_name="schema"),
+        name="redoc",
+    ),  # 生成僅供閱讀的api文件
 ]
