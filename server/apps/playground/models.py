@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 # jango 會自動產生一個id 所以不用特別打
+
 # 這邊有改動都要：
 # 建立遷移檔 Models -> Migrations：uv run manage.py makemigrations
 # 遷移檔套用到資料庫 Migrations -> DB：uv run manage.py migrate
