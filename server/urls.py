@@ -26,9 +26,11 @@ from drf_spectacular.views import (
 urlpatterns = [
     # 指定使用者呼叫的位置： path("path",view位置)
     path("admin/", admin.site.urls),
-    path(
-        "api/v1/playground/", include("server.apps.playground.urls")
-    ),  # 前綴方式可以連接到各種不同的apps 讓apps個字的功能就可以連動到各自的urls
+    # path(
+    #     "api/v1/playground/", include("server.apps.playground.urls")
+    # ),  # 前綴方式可以連接到各種不同的apps 讓apps個字的功能就可以連動到各自的urls
+    path("api/v1/todo/", include("server.apps.todo.urls")),
+    # API
     path(
         "api/docs/schema.json", SpectacularJSONAPIView.as_view(), name="schema"
     ),  # 生成json檔案
@@ -42,7 +44,8 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),  # 生成僅供閱讀的api文件
+    # TOKEN
     path("api/auth/", include("djoser.urls")),
     path("api/auth/", include("djoser.urls.authtoken")),  # 產生login 跟logout API
-    path("api/auth/", include("djoser.urls.jwt")),# jwt
+    path("api/auth/", include("djoser.urls.jwt")),  # jwt
 ]

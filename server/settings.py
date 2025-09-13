@@ -207,10 +207,10 @@ EMAIL_BACKEND = (
 EMAIL_FILE_PATH = BASE_DIR / "emails"  # 將信件改為一隻檔案存在
 
 # CORS 跨域請求
-CORS_ALLOWED_ORIGIN_REGEXES = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 # # 如果有指定列表
-# CORS_ALLOWED_ORIGIN_REGEXES = False
+# CORS_ALLOW_ALL_ORIGINS = False
 # CORS_ALLOWED_ORIGINS = [
 #     "https://example.com",
 #     "https://sub.example.com",

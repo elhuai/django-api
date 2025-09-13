@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-from rest_framework.views import APIView, ListCreateAPIView
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from server.apps.playground.models import Item, ItemComment
@@ -51,9 +51,9 @@ class HiView(APIView):
 
 # GET /xxxxxx/items => 得到資料庫中所有的 Items
 # 第一寫法：使用框架 (把取資料方式改為通用方式，不要很多地方都用相同的語法)
-class ItemListView(ListCreateAPIView):
-    serializer_class = ItemSerializer
-    queryset = Item.objects.all()
+# class ItemListView(ListCreateAPIView):
+#     serializer_class = ItemSerializer
+#     queryset = Item.objects.all()
 
 
 # 第二種寫法：()
