@@ -48,12 +48,16 @@ INSTALLED_APPS = [
     "djoser",
     "rest_framework_simplejwt",  # JWT
     "rest_framework_simplejwt.token_blacklist",  # JWT 黑名單
+    "corsheaders",
     # local APPS
     "server.apps.management",  # 新增這app放在這路徑
     "server.apps.playground",  # 新增這app放在這路徑
+    "server.apps.todo",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -201,3 +205,15 @@ EMAIL_BACKEND = (
 )
 
 EMAIL_FILE_PATH = BASE_DIR / "emails"  # 將信件改為一隻檔案存在
+
+# CORS 跨域請求
+CORS_ALLOWED_ORIGIN_REGEXES = True
+
+# # 如果有指定列表
+# CORS_ALLOWED_ORIGIN_REGEXES = False
+# CORS_ALLOWED_ORIGINS = [
+#     "https://example.com",
+#     "https://sub.example.com",
+#     "http://localhost:8080",
+#     "http://127.0.0.1:9000",
+# ]
