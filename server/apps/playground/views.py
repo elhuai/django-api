@@ -208,7 +208,9 @@ class ItemCommentViewSet(ModelViewSet):
         "id": ["gt", "gte", "lt", "lte"],
         "created_at": ["gt", "gte", "lt", "lte"],
         "updated_at": ["gt", "gte", "lt", "lte"],
-        "item__is_active": ["exact"],
+        "item__is_active": ["exact"],  # 完全符合
         "item__name": ["exact", "contains"],
     }
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [
+        IsAuthenticatedOrReadOnly
+    ]  # 如果HEADER裡面沒有TOKEN的話 就會只有讀取的功能 不得寫入

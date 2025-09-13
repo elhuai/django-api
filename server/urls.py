@@ -42,4 +42,7 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),  # 生成僅供閱讀的api文件
+    path("api/auth/", include("djoser.urls")),
+    path("api/auth/", include("djoser.urls.authtoken")),  # 產生login 跟logout API
+    path("api/auth/", include("djoser.urls.jwt")),# jwt
 ]

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -44,6 +45,9 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_filters",
     "drf_spectacular",
+    "djoser",
+    "rest_framework_simplejwt",  # JWT
+    "rest_framework_simplejwt.token_blacklist",  # JWT 黑名單
     # local APPS
     "server.apps.management",  # 新增這app放在這路徑
     "server.apps.playground",  # 新增這app放在這路徑
@@ -144,17 +148,56 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",  # 建立API文件資料
+    # "DEFAULT_AUTHENTICATION_CLASSES": [
+    #     "rest_framework.authentication.TokenAuthentication",
+    # ],  # 建立TOKEN驗證(不會過期所以不會使用)
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
-    ],
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],  # 建立 JWT 會過期的token
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
-    ],
+    ],  # 建立沒有TOKEN時以permissions 執行權限
 }
 
+# API文件
 SPECTACULAR_SETTINGS = {
     "TITLE": "Django API",
     "DESCRIPTION": "My Django API",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,  # 文件是否顯示 Schema
 }
+
+# TOKEN
+# 要自動送出email 要去到
+DJOSER = {
+    "EMAIL_FRONTEND_PROTOCOL": "http",  # 前端的portal email 的網址
+    "EMAIL_FRONTEND_DOMAIN": "localhost:3000",  # domain+port
+    "EMAIL_FRONTEND_SITE_NAME": "My Website",  # 網站名稱叫什麼
+    "SEND_ACTIVATION_EMAIL": True,  # 打開帳號啟用的功能
+    "ACTIVATION_URL": "users/activate/{uid}/{token}",
+    "PASSWORD_RESET_CONFIRM_URL": "users/password/reset/confirm/{uid}/{token}",  # 重製密碼要導向哪個頁面
+    "USERNAME_RESET_CONFIRM_URL": "users/username/reset/confirm/{uid}/{token}",  # 重製使用者名稱要導向哪個頁面
+    "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,  # 使用者更換email的時候要通知
+}
+
+# JWT
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=5
+    ),  # ACCESS_TOKEN 生命週期 要訪問資源可以用的TOKEN權限 每次請求都用來認證用戶
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=1
+    ),  # refreshToken的生命週期是一天 保持登入的狀態 (可以保持登入但未必能打資料) 用來換新的 Access Token
+    "ROTATE_REFRESH_TOKENS": True,  # 假設使用者無論有沒有在使用 一天後就要登出-->FALSE ；
+    "BLACKLIST_AFTER_ROTATION": True,
+    "UPDATE_LAST_LOGIN": True,  # REFRESH TOKEN有沒有要更新最後的登入時間
+}
+
+
+# TOKEN EMAIL SETTING (要串server才能寄信，所以dev情況下不會寄信)
+EMAIL_BACKEND = (
+    "django.core.mail.backends.filebased.EmailBackend"  # 因為不能寄信所以用dev設定
+)
+
+EMAIL_FILE_PATH = BASE_DIR / "emails"  # 將信件改為一隻檔案存在
