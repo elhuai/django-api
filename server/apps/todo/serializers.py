@@ -3,6 +3,7 @@ from rest_framework.serializers import (
     CurrentUserDefault,
     HiddenField,
     ModelSerializer,
+    PrimaryKeyRelatedField,
 )
 
 from server.apps.todo.models import Project, Tag, Task
@@ -17,9 +18,6 @@ class OwnerSerializer(ModelSerializer):
 
 
 class ProjectSerializer(ModelSerializer):
-    # owner = HiddenField(default=CurrentUserDefault())
-    # 使用者無法指定 owner 。 系統會自動把 request.user 填進去
-    # 如果參與了unique
     owner_id = HiddenField(
         default=CurrentUserDefault(),
         source="owner",
@@ -38,32 +36,52 @@ class ProjectSerializer(ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = [
-            "owner"
-        ]  # 讓前端可以看到 owner 是誰。 防止使用者在 POST 或 PUT 中手動指定 owner（防止偽造或越權）
-
-
-class TagSerializer(ModelSerializer):
-    owner_id = HiddenField(
-        default=CurrentUserDefault(), source="owner", write_only=True
-    )
-
-    owner = OwnerSerializer(read_only=True)
-
-    class Meta:
-        model = Tag
-        fields = ["id", "name", "owner", "owner_id", "created_at", "updated_at"]
         read_only_fields = ["owner"]
 
 
-class TaskSerializer(ModelSerializer):
-    # owner = HiddenField(default=CurrentUserDefault())
+class TagSerializer(ModelSerializer):
     owner_id = HiddenField(
         default=CurrentUserDefault(),
         source="owner",
         write_only=True,
     )
     owner = OwnerSerializer(read_only=True)
+
+    class Meta:
+        model = Tag
+        fields = [
+            "id",
+            "name",
+            "owner",
+            "owner_id",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["owner"]
+
+
+class TaskSerializer(ModelSerializer):
+    owner_id = HiddenField(
+        default=CurrentUserDefault(),
+        source="owner",
+        write_only=True,
+    )
+    owner = OwnerSerializer(read_only=True)
+
+    project_id = PrimaryKeyRelatedField(
+        source="project",
+        queryset=Project.objects.all(),
+        write_only=True,
+    )
+    project = ProjectSerializer(read_only=True)
+
+    tag_ids = PrimaryKeyRelatedField(
+        source="tags",
+        queryset=Tag.objects.all(),
+        write_only=True,
+        many=True,
+    )
+    tags = TagSerializer(read_only=True, many=True)
 
     class Meta:
         model = Task
@@ -77,7 +95,9 @@ class TaskSerializer(ModelSerializer):
             "owner",
             "owner_id",
             "project",
+            "project_id",
             "tags",
+            "tag_ids",
             "created_at",
             "updated_at",
         ]
